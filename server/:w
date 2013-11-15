@@ -52,15 +52,13 @@ void player_queue_remove_by_fd( player_queue * queue, int key )
 {
 	player * cur = queue->tail;
 	player * prev = NULL;
-	while( cur != NULL )
+	while( cur->next != NULL )
 	{
 		if( cur->sockfd == key )
 		{
 			if( prev != NULL ) prev->next = cur->next;
-			if( cur == queue->tail ) queue->tail = queue->tail->next;
-			if( cur == queue->head ) queue-> head = prev;
+			if( cur->next != NULL ) cur->next->prev = prev;
 			free( cur );
-			return;
 		}
 		prev = cur;
 		cur = cur->next;

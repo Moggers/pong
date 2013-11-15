@@ -1,4 +1,5 @@
 #include "ts_queue.h"
+#include "debug.h"
 
 ts_queue * ts_queue_create( void )
 {
@@ -11,12 +12,12 @@ ts_queue * ts_queue_create( void )
 	return new_queue;
 }
 
-void ts_queue_push( ts_queue * targ, void * new_fd )
+void ts_queue_push( ts_queue * targ, void * data )
 {
 	pthread_mutex_lock( targ->lock );
 
 	ts_queue_node * node = malloc( sizeof( ts_queue_node ) );
-	node->data = new_fd;
+	node->data = data;
 	node->next = NULL;
 
 	if( targ->tail == NULL )
@@ -55,7 +56,10 @@ void * ts_queue_try_pop( ts_queue * targ )
 	pthread_mutex_lock( targ->lock );
 
 	if( targ->head == NULL )
+	{
+		pthread_mutex_unlock( targ->lock );
 		return NULL;
+	}
 	if( targ->head == targ->tail )
 		targ->tail = NULL;
 	void * data = targ->head->data;

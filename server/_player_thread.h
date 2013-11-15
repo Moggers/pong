@@ -1,7 +1,7 @@
 #ifndef DEFINED_PLAYER_THREAD
 #define DEFINED_PLAYER_THREAD
 
-#include "ts_queue.h"
+#include "../general/ts_queue.h"
 
 typedef struct player_thread_args
 {

@@ -3,17 +3,16 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include "player.h"
 
 typedef struct player player; // Fucking circular dependancies god damn it
 
 #define PACKET_CLIENT_REQUEST 1
-#define PACKET_CLIENT_INFO 2
-#define PACKET_CLIENT_INFO_REQUEST 3
-#define PACKET_CLIENT_DISCONNECT 4
+#define PACKET_CLIENT_INFO 			2
+#define PACKET_CLIENT_INFO_REQUEST 	3
+#define PACKET_CLIENT_DISCONNECT 	4
 #define PACKET_CLIENT_START_MESSAGE 5
-#define PACKET_CLIENT_GAME_STATE 6
-#define PACKET_CLIENT_MOVE_UPDATE 7
+#define PACKET_CLIENT_GAME_STATE 	6
+#define PACKET_CLIENT_MOVE_UPDATE 	7
 
 typedef struct client_request
 {
@@ -80,10 +79,12 @@ generic_packet * create_client_info_request( int );
 
 generic_packet * create_client_disconnect( int );
 
-generic_packet * create_client_start_message( player *, player * );
+generic_packet * create_client_start_message( char *, char * );
 
 generic_packet * create_client_game_state( float, float, float, float );
 
 generic_packet * create_client_move_update( int, float );
+
+char * packet_type_name( int );
 
 #endif // DECLARED_NET_STRUCTS

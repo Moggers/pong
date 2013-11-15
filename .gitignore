@@ -16,3 +16,9 @@
 *.exe
 *.out
 *.app
+
+# Swap files
+*.swp
+
+# Weird fucking fuse files
+*.fuse*

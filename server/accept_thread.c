@@ -49,11 +49,13 @@ void * accept_thread_callback( void * args )
 	for( ;; )
 	{
 		struct addrinfo their_address;
+		memset( &their_address, 0, sizeof( their_address ) );
 		debug_printf( "Waiting for connection\n" );
 		int new_fd = accept( sockfd, their_address.ai_addr, &their_address.ai_addrlen );
 		debug_printf( "Received a connection\n" );
 		generic_packet * packet = create_client_request( new_fd );
 		ts_queue_push( ((accept_thread_args*)args)->queue, packet );
+		debug_printf( "Completed connection accept\n" );
 	}
 } 
 

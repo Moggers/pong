@@ -4,10 +4,10 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
-#include "ts_queue.h"
-#include "net_structs.h"
+#include "../general/ts_queue.h"
+#include "../general/net_structs.h"
 
-typedef struct generic_packet generic_packet; // Resolves circular dependancy with net_structs.h
+typedef struct generic_packet generic_packet; // Forward declare solves circular dependancy
 
 typedef struct player
 	{

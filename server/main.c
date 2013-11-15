@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>
-#include "ts_queue.h"
-#include "debug.h"
-#include "net_structs.h"
+#include "../general/ts_queue.h"
+#include "../general/debug.h"
+#include "../general/net_structs.h"
 #include "accept_thread.h"
 #include "player.h"
 #include <math.h>
@@ -43,12 +43,14 @@ int main( int argc, char * argv[] )
 				player_queue_push( players, ply );
 				generic_packet * pkt = create_client_info_request( ply->sockfd );
 				send_to_player( ply, pkt );
+				debug_printf( "Sent info request packet to client\n" );
 			}
 
 			if( packet->packet_type == PACKET_CLIENT_INFO )
 			{
 				player * ply = player_queue_search_by_fd( players, packet->cl_info.sockfd );
 				strcpy( ply->name, packet->cl_info.name );
+				debug_printf( "%d told us that their name is %s\n", ply->sockfd, ply->name );
 			}
 			if( packet->packet_type == PACKET_CLIENT_DISCONNECT )
 			{
@@ -69,10 +71,11 @@ int main( int argc, char * argv[] )
 		{
 			if( game_state == -1 )
 			{
+				debug_printf( "Match is starting between %s and %s\n", players->tail->name, players->tail->next->name );
 				win = 0;
 				match = 0;
 				game_state = 0;
-				generic_packet * packet = create_client_start_message( players->tail, players->tail->next );
+				generic_packet * packet = create_client_start_message( players->tail->name, players->tail->next->name );
 				send_to_all_players( players, packet );
 				free( packet );
 			}
@@ -130,6 +133,10 @@ int main( int argc, char * argv[] )
 			packet = create_client_game_state( left_paddle, right_paddle, ballx, bally );
 			send_to_all_players( players, packet );
 			free( packet );
+		}
+		else
+		{
+			game_state = -1;
 		}
 	}
 

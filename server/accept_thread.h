@@ -10,9 +10,9 @@
 #include <netdb.h>
 #include <string.h>
 #include <errno.h>
-#include "debug.h"
-#include "ts_queue.h"
-#include "net_structs.h"
+#include "../general/debug.h"
+#include "../general/ts_queue.h"
+#include "../general/net_structs.h"
 
 typedef struct accept_thread_args
 {

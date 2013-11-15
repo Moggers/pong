@@ -52,13 +52,13 @@ generic_packet * create_client_disconnect( int sockfd )
 	return packet;
 }
 
-generic_packet * create_client_start_message( player * ply0, player * ply1 )
+generic_packet * create_client_start_message( char * name0, char * name1 )
 {
 	generic_packet * packet = malloc( sizeof( generic_packet ) );
 	memset( packet, 0, sizeof( generic_packet ) );
 	packet->packet_type = PACKET_CLIENT_START_MESSAGE;
-	strcpy( packet->cl_message.ply_one, ply0->name );
-	strcpy( packet->cl_message.ply_two, ply1->name );
+	strcpy( packet->cl_message.ply_one, name0 );
+	strcpy( packet->cl_message.ply_two, name1 );
 
 	return packet;
 }
@@ -84,4 +84,27 @@ generic_packet * create_client_move_update( int sockfd, float y )
 	packet->cl_mv_update.y = y;
 
 	return packet;
+}
+
+char * packet_type_name( int type )
+{
+	switch( type )
+	{
+		case PACKET_CLIENT_REQUEST:
+			return "packet client request";
+		case PACKET_CLIENT_INFO:
+			return "packet client info";
+		case PACKET_CLIENT_INFO_REQUEST:
+			return "packet client info request";
+		case PACKET_CLIENT_DISCONNECT:
+			return "packet client disconnect";
+		case PACKET_CLIENT_START_MESSAGE:
+			return "packet client start message";
+		case PACKET_CLIENT_GAME_STATE:
+			return "packet client game state";
+		case PACKET_CLIENT_MOVE_UPDATE:
+			return "packet client move update";
+		default:
+			return "unrecognized, probably unallocated memory\n";
+	}
 }

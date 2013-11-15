@@ -1,13 +1,11 @@
 #ifndef DEFINED_CONNECT
 #define DEFINED_CONNECT
-#include <stdlib.h>
-#include <stdlib.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
 
-int connect_to_server( char * , char *, ts_queue * queue );
-void send_to_server( 
+#include "../general/ts_queue.h"
+#include "../general/net_structs.h"
 
-#endif // DEFINED_CONNECt
+int g_server_sockfd;
+int connect_to_server( char * , char *, ts_queue * );
+void send_to_server( generic_packet* );
+
+#endif // DEFINED_CONNECT
