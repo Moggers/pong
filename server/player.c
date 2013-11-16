@@ -73,6 +73,7 @@ player * player_create( ts_queue * queue, int sockfd )
 	memset( ply->name, 0, sizeof( char ) * 32 );
 	ply->sockfd = sockfd;
 	ply->next = NULL;
+	ply->y = 0;
 
 	player_thread_args * args;
 	args = malloc( sizeof( player_thread_args ) );

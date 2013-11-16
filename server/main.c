@@ -25,12 +25,9 @@ int main( int argc, char * argv[] )
 	player_queue * players = player_queue_create();
 
 	int game_state = -1;
-	float left_paddle, right_paddle;
-	float ballx, bally;
-	float bvx, bvy;
 	srand( clock() );
-	int win;
-	int match;
+
+	float paddle_0, paddle_1;
 
 	for( ;; )
 	{
@@ -56,87 +53,30 @@ int main( int argc, char * argv[] )
 			{
 				player_queue_remove_by_fd( players, packet->cl_disconnect.sockfd );
 			}
-
 			if( packet->packet_type == PACKET_CLIENT_MOVE_UPDATE )
 			{
 				int sockfd;
 				float y;
 				player * ply;
 				ply = player_queue_search_by_fd( players, packet->cl_mv_update.sockfd );
-				ply->y = packet->cl_mv_update.y;				
+				ply->y += packet->cl_mv_update.y * 0.001;				
+				debug_printf( "Moved %d to %f, moving by %f unit\n", ply->sockfd, ply->y, packet->cl_mv_update.y );
+				if( players->tail == ply )
+				{
+					debug_printf( "That was player one, so we're sending out the position updates\n" );
+					send_to_all_players( players, create_client_game_state( players->tail->y, players->tail->next->y, 0, 0 ) );
+				}
+				if( players->tail->next == ply )
+				{
+					debug_printf( "That was player two, so we're sending out the position updates\n" );
+					send_to_all_players( players, create_client_game_state( players->tail->y, players->tail->next->y, 0, 0 ) );
+				}
 			}
+			free( packet );
 		}
 
 		if( players->tail != NULL && players->tail->next != NULL )
 		{
-			if( game_state == -1 )
-			{
-				debug_printf( "Match is starting between %s and %s\n", players->tail->name, players->tail->next->name );
-				win = 0;
-				match = 0;
-				game_state = 0;
-				generic_packet * packet = create_client_start_message( players->tail->name, players->tail->next->name );
-				send_to_all_players( players, packet );
-				free( packet );
-			}
-
-			if( game_state == 0 )
-			{
-				if( match == 2 )
-				{
-					// Win condition
-				}
-				game_state = 1;
-				left_paddle = 0.f;
-				right_paddle = 0.f;
-				ballx = 0.f;
-				bally = 0.f;
-				bvx = (float)( rand() * 10000 % 20000 ) / 10000.f;
-				bvy = (float)( rand() * 10000 % 20000 ) / 10000.f;
-				float h = pow( pow( bvx, 2 ) + pow( bvy, 2 ), 0.5 );
-				bvx /= h;
-				bvy /= h;
-				usleep( 100000 );
-			}
-
-			ballx += bvx;
-			bally += bvy;
-
-			if( bally >= 50 || bally <= -50 )
-				bvy = -bvy;
-
-			if( ballx > 50 )
-			{
-				if( right_paddle < ( bally + 5 ) && right_paddle > ( bally - 5 ) )
-					bvx = -bvx;
-				else
-				{
-					win--;
-					match++;
-					game_state = 0;
-				}
-			}
-
-
-			if( ballx < -50 )
-			{
-				if( left_paddle < ( bally + 5 ) && left_paddle > ( bally - 5 ) )
-					bvx = -bvx;
-				else
-				{
-					win++;
-					match++;
-					game_state = 0;
-				}
-			}
-
-			packet = create_client_game_state( left_paddle, right_paddle, ballx, bally );
-			send_to_all_players( players, packet );
-			free( packet );
-		}
-		else
-		{
-			game_state = -1;
 		}
 	}
 

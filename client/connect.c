@@ -66,10 +66,9 @@ void * connect_thread_callback( void * args )
 		if( status == 0 )
 		{
 			debug_printf( "Disconnected from serber\n" );
-			exit( 0 );
+			pthread_exit( 0 );
 		}
 		ts_queue_push( ((connect_thread_args*)args)->upstream, packet );
-		debug_printf( "Received packet, forwarded to primary thread\n" );
 	}
 }
 

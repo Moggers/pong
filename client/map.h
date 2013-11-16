@@ -1,12 +1,10 @@
-typedef struct map
-{
-	float left_paddle;
-	float right_paddle;
-	float ball_x;
-	float ball_y;
-} map;
+#ifndef DEFINED_MAP
+#define DEFNED_MAP
+
+int g_key_pressing;
 
 void map_init( void );
 
-void map_draw( struct map * );
+void map_draw( float, float );
 
+#endif // DEFINED_MAP
