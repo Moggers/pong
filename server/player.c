@@ -1,6 +1,7 @@
 #include "player.h"
 #include <errno.h>
 #include "../general/debug.h"
+#include <string.h>
 
 player_queue * player_queue_create( void )
 {
@@ -35,6 +36,32 @@ player * player_queue_pop( player_queue * src )
 	}
 	src->tail = src->tail->next;
 	return ptr;
+}
+
+void player_queue_first_to_last( player_queue * src )
+{
+	player * ptr;
+	ptr = src->tail;
+	if( ptr == src->head )
+	{
+		return;
+	}
+	src->tail = ptr->next;
+	src->head->next = ptr;
+	ptr->next = NULL;
+}
+
+void player_queue_second_to_last( player_queue * src )
+{
+	player * ptr;
+	ptr = src->tail->next;
+	if( ptr == src->head )
+	{
+		return;
+	}
+	src->tail->next = ptr->next;
+	src->head->next = ptr;
+	ptr->next = NULL;
 }
 
 player * player_queue_search_by_fd( player_queue * queue, int key )
@@ -74,6 +101,7 @@ player * player_create( ts_queue * queue, int sockfd )
 	ply->sockfd = sockfd;
 	ply->next = NULL;
 	ply->y = 0;
+	memset( ply->name, 0, sizeof( ply->name ) );
 
 	player_thread_args * args;
 	args = malloc( sizeof( player_thread_args ) );

@@ -86,6 +86,15 @@ generic_packet * create_client_move_update( int sockfd, float y )
 	return packet;
 }
 
+generic_packet * create_client_start_countdown( int n )
+{
+	generic_packet * packet = malloc( sizeof( generic_packet ) );
+	packet->packet_type = PACKET_CLIENT_START_COUNTDOWN;
+	packet->cl_countdown.timer = n;
+
+	return packet;
+}
+
 char * packet_type_name( int type )
 {
 	switch( type )
@@ -104,6 +113,8 @@ char * packet_type_name( int type )
 			return "packet client game state";
 		case PACKET_CLIENT_MOVE_UPDATE:
 			return "packet client move update";
+		case PACKET_CLIENT_START_COUNTDOWN:
+			return "packet client start countdown";
 		default:
 			return "unrecognized, probably unallocated memory\n";
 	}

@@ -7,6 +7,7 @@ GLFWwindow * g_win;
 GLuint g_shader_program;
 GLuint g_pad0_buffer;
 GLuint g_pad1_buffer;
+GLuint g_ball_buffer;
 
 GLuint create_vertex_shader( void )
 {
@@ -141,6 +142,7 @@ void init_resources( void )
 {
 	glGenBuffers( 1, &g_pad0_buffer );
 	glGenBuffers( 1, &g_pad1_buffer );
+	glGenBuffers( 1, &g_ball_buffer );
 }
 
 void move_pad0( float n )
@@ -153,6 +155,20 @@ void move_pad0( float n )
 		-0.85f, n - 0.3f, 0.f, 1.f,
 		-0.85f, n + 0.3f, 0.f, 1.f };
 	glBindBuffer( GL_ARRAY_BUFFER, g_pad0_buffer );
+	glBufferData( GL_ARRAY_BUFFER, sizeof( vertex_pos ), vertex_pos, GL_STATIC_DRAW );
+	glBindBuffer( GL_ARRAY_BUFFER, 0 );
+}
+
+void move_ball( float x, float y )
+{
+	const float vertex_pos[] = {
+		x - 0.01f, y - 0.01f, 0.f, 1.f,
+		x - 0.01f, y + 0.01f, 0.f, 1.f,
+		x + 0.01f, y + 0.01f, 0.f, 1.f,
+		x + 0.01f, y + 0.01f, 0.f, 1.f,
+		x + 0.01f, y - 0.01f, 0.f, 1.f,
+		x - 0.01f, y - 0.01f, 0.f, 1.f,};
+	glBindBuffer( GL_ARRAY_BUFFER, g_ball_buffer );
 	glBufferData( GL_ARRAY_BUFFER, sizeof( vertex_pos ), vertex_pos, GL_STATIC_DRAW );
 	glBindBuffer( GL_ARRAY_BUFFER, 0 );
 }
@@ -195,6 +211,18 @@ void draw_pad1( float n )
 	glDrawArrays( GL_TRIANGLES, 0, 6 );
 }
 
+void draw_ball( float x, float y )
+{
+	move_ball( x, y );
+	glColor4f( 1.f, 1.f, 1.f, 1.f );
+	glUseProgram( g_shader_program );
+	glBindBuffer( GL_ARRAY_BUFFER, g_ball_buffer );
+	glEnableVertexAttribArray( 0 );
+	glVertexAttribPointer( 0, 4, GL_FLOAT, GL_FALSE, 0, 0 );
+	glBindBuffer( GL_ARRAY_BUFFER, 0 );
+	glDrawArrays( GL_TRIANGLES, 0, 6 );
+}
+
 void map_init( void )
 {
 	g_key_pressing  = 0;
@@ -214,12 +242,13 @@ void map_init( void )
 	glfwPollEvents();
 }
 
-void map_draw( float pad0, float pad1 )
+void map_draw( float pad0, float pad1, float ballx, float bally )
 {
 	glClearColor( .1f, .1f, .1f, 1.f );
 	glClear( GL_COLOR_BUFFER_BIT );
 	draw_pad0( pad0 );
 	draw_pad1( pad1 );
+	draw_ball( ballx, bally );
 	glfwSwapBuffers( g_win );
 	glfwPollEvents();
 }

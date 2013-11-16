@@ -6,13 +6,14 @@
 
 typedef struct player player; // Fucking circular dependancies god damn it
 
-#define PACKET_CLIENT_REQUEST 1
-#define PACKET_CLIENT_INFO 			2
-#define PACKET_CLIENT_INFO_REQUEST 	3
-#define PACKET_CLIENT_DISCONNECT 	4
-#define PACKET_CLIENT_START_MESSAGE 5
-#define PACKET_CLIENT_GAME_STATE 	6
-#define PACKET_CLIENT_MOVE_UPDATE 	7
+#define PACKET_CLIENT_REQUEST 			1
+#define PACKET_CLIENT_INFO 				2
+#define PACKET_CLIENT_INFO_REQUEST 		3
+#define PACKET_CLIENT_DISCONNECT 		4
+#define PACKET_CLIENT_START_MESSAGE 	5
+#define PACKET_CLIENT_GAME_STATE 		6
+#define PACKET_CLIENT_MOVE_UPDATE 		7
+#define PACKET_CLIENT_START_COUNTDOWN 	8
 
 typedef struct client_request
 {
@@ -55,6 +56,11 @@ typedef struct client_move_update
 	float y;
 } move_update;
 
+typedef struct client_start_countdown
+{
+	int timer;
+} client_start_countdown;
+
 typedef struct generic_packet
 {
 	int packet_type;
@@ -68,6 +74,7 @@ typedef struct generic_packet
 		struct client_game_state cl_ga_state;
 		struct client_info_request cl_in_request;
 		struct client_move_update cl_mv_update;
+		struct client_start_countdown cl_countdown;
 	};
 } generic_packet;
 
@@ -84,6 +91,8 @@ generic_packet * create_client_start_message( char *, char * );
 generic_packet * create_client_game_state( float, float, float, float );
 
 generic_packet * create_client_move_update( int, float );
+
+generic_packet * create_client_start_countdown( int );
 
 char * packet_type_name( int );
 

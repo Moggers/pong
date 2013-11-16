@@ -4,6 +4,7 @@
 #include <time.h>
 #include "../general/debug.h"
 #include "map.h"
+#include <time.h>
 
 int main( int argc, char * argv[] )
 {
@@ -19,10 +20,11 @@ int main( int argc, char * argv[] )
 	connect_to_server( argv[1], argv[2], queue );
 	int ply_id;
 	float paddle_left = 0, paddle_right = 0;
-	float ball_x, ball_y;
+	float ball_x = 0, ball_y = 0;
 
 	for( ;; )
 	{
+		usleep( 10000 );
 		generic_packet * pkt;
 		while ( ( pkt = ts_queue_try_pop( queue ) ) != NULL )
 		{
@@ -40,15 +42,22 @@ int main( int argc, char * argv[] )
 				ball_x = pkt->cl_ga_state.bx;
 				ball_y = pkt->cl_ga_state.by;
 			}
+			if( pkt->packet_type == PACKET_CLIENT_START_MESSAGE )
+			{
+				fprintf( stdout, "%s vs %s\n", pkt->cl_message.ply_one, pkt->cl_message.ply_two );
+			}
+			if( pkt->packet_type == PACKET_CLIENT_START_COUNTDOWN )
+			{
+				fprintf( stdout, "Game starting in %d\n", pkt->cl_countdown.timer );
+			}
 				
 			free( pkt );
 		}
 		if( g_key_pressing != 0 )
 		{
 			send_to_server( create_client_move_update( ply_id, g_key_pressing ) );
-			debug_printf( "moved\n" );
 		}
-		map_draw( paddle_left, paddle_right );
+		map_draw( paddle_left, paddle_right, ball_x, ball_y );
 	}
 	return 0;
 }
