@@ -229,6 +229,8 @@ void map_init( void )
 	debug_printf( "Initializing graphics\n" );
 	debug_printf( "Intializing window\n" );
 	glfwInit();
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 3 );
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
 	g_win = glfwCreateWindow( 512, 512, "Pong", NULL, NULL ); 
 	glfwMakeContextCurrent( g_win );
 	glfwSetWindowSizeCallback( g_win, window_size_callback );

@@ -16,6 +16,8 @@
 *.exe
 *.out
 *.app
+server
+client
 
 # Swap files
 *.swp
